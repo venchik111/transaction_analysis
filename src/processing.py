@@ -2,28 +2,35 @@ from datetime import datetime
 
 
 def filter_by_state(
-    list_of_dicts: list[dict], filter_state: str = "EXECUTED"
+    list_of_dicts: list[dict],
+    filter_state: str = "EXECUTED",
 ) -> list[dict]:
-    """Фильтрует список словарей по значению ключа state"""
-
-    filtered_dicts: list[dict] = []
+    """Фильтрует список операций по статусу."""
+    filtered_operations = []
 
     for item in list_of_dicts:
-        if item["state"] == filter_state:
-            filtered_dicts.append(item)
+        if item.get("state") == filter_state:
+            filtered_operations.append(item)
 
-    return filtered_dicts
+    return filtered_operations
 
 
-def sort_by_date(list_of_dicts: list[dict], reverse: bool = True) -> list[dict]:
-    """Сортирует список словарей по значению ключа date"""
+def sort_by_date(
+    list_of_dicts: list[dict],
+    reverse: bool = True,
+) -> list[dict]:
+    """Сортирует список операций по дате."""
 
-    def get_date_key(item):
-        date_str = item.get("date")
+    def get_date(item: dict):
+        date = item.get("date")
 
-        if date_str:
-            return datetime.fromisoformat(date_str)
+        if date:
+            return datetime.fromisoformat(date)
 
         return datetime.min
 
-    return sorted(list_of_dicts, key=get_date_key, reverse=reverse)
+    return sorted(
+        list_of_dicts,
+        key=get_date,
+        reverse=reverse,
+    )

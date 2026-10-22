@@ -31,7 +31,8 @@ def load_transactions(file_path: str) -> list[dict[str, Any]]:
 
         if isinstance(transactions, list):
             logger.info("JSON-файл успешно прочитан")
-            return transactions
+
+            return [item for item in transactions if isinstance(item, dict) and item]
 
         logger.error("JSON-файл содержит не список")
         return []
@@ -45,14 +46,21 @@ def load_transactions(file_path: str) -> list[dict[str, Any]]:
         return []
 
 
-def load_transactions_csv(file_path: str) -> list[dict[str, Any]]:
+def load_transactions_csv(
+    file_path: str,
+) -> list[dict[str, Any]]:
     """Считывает финансовые операции из CSV-файла."""
-    transactions = pd.read_csv(file_path, sep=";")
+    transactions = pd.read_csv(
+        file_path,
+        sep=";",
+    )
 
     return transactions.to_dict(orient="records")
 
 
-def load_transactions_excel(file_path: str) -> list[dict[str, Any]]:
+def load_transactions_excel(
+    file_path: str,
+) -> list[dict[str, Any]]:
     """Считывает финансовые операции из XLSX-файла."""
     transactions = pd.read_excel(file_path)
 

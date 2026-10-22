@@ -116,3 +116,34 @@ def transactions() -> list[dict]:
             "description": "Перевод организации",
         },
     ]
+
+
+@pytest.fixture
+def bank_operations() -> list[dict]:
+    return [
+        {
+            "id": 1,
+            "state": "EXECUTED",
+            "description": "Перевод организации",
+        },
+        {
+            "id": 2,
+            "state": "EXECUTED",
+            "description": "Перевод со счета на счет",
+        },
+        {
+            "id": 3,
+            "state": "CANCELED",
+            "description": "Перевод организации",
+        },
+        {
+            "id": 4,
+            "state": "EXECUTED",
+            "description": "Открытие вклада",
+        },
+        {
+            "id": 5,
+            "state": "PENDING",
+            "description": "Перевод с карты на карту",
+        },
+    ]
