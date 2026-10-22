@@ -7,3 +7,6 @@ __pycache__/
 htmlcov/
 .pytest_cache/
 logs/
+.venv/
+.mypy_cache/
+reports/
