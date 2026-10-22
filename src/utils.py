@@ -5,7 +5,8 @@ from typing import Any
 
 import pandas as pd
 
-logs_dir = Path(__file__).resolve().parent.parent / "logs"
+BASE_DIR = Path(__file__).resolve().parent.parent
+logs_dir = BASE_DIR / "logs"
 logs_dir.mkdir(exist_ok=True)
 
 logger = logging.getLogger(__name__)
@@ -62,6 +63,48 @@ def load_transactions_excel(
     file_path: str,
 ) -> list[dict[str, Any]]:
     """Считывает финансовые операции из XLSX-файла."""
-    transactions = pd.read_excel(file_path)
+    transactions = pd.read_excel(file_path, dtype={"Номер карты": str})
 
     return transactions.to_dict(orient="records")
+
+
+def setup_logging() -> None:
+    """Настраивает запись логов в файл."""
+    logs_dir = BASE_DIR / "logs"
+    logs_dir.mkdir(exist_ok=True)
+    logging.basicConfig(
+        filename=logs_dir / "app.log",
+        level=logging.INFO,
+        format="%(asctime)s %(name)s %(levelname)s: %(message)s",
+        encoding="utf-8",
+    )
+
+
+def load_operations(file_path: str | Path) -> pd.DataFrame:
+    """Готовит таблицу операций для курсовой на основе Excel-загрузчика."""
+    transactions = pd.DataFrame(load_transactions_excel(str(file_path)))
+
+    for column in ["Дата операции", "Дата платежа"]:
+        if column in transactions.columns:
+            transactions[column] = pd.to_datetime(transactions[column], dayfirst=True, errors="coerce")
+
+    logger.info("Прочитано операций для анализа: %s", len(transactions))
+    return transactions
+
+
+def load_settings() -> dict:
+    """Читает настройки валют и акций."""
+    with open(BASE_DIR / "user_settings.json", encoding="utf-8") as file:
+        settings: dict = json.load(file)
+        return settings
+
+
+def transactions_to_json(transactions: pd.DataFrame) -> str:
+    """Преобразует таблицу в JSON с датами и пустыми значениями."""
+    data = transactions.copy()
+
+    for column in data.columns:
+        if pd.api.types.is_datetime64_any_dtype(data[column]):
+            data[column] = data[column].dt.strftime("%Y-%m-%d %H:%M:%S")
+
+    return data.to_json(orient="records", force_ascii=False)
