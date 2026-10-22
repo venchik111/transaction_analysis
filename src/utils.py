@@ -49,7 +49,7 @@ def load_transactions(file_path: str) -> list[dict[str, Any]]:
 
 def load_transactions_csv(
     file_path: str,
-) -> list[dict[str, Any]]:
+) -> list[dict]:
     """Считывает финансовые операции из CSV-файла."""
     transactions = pd.read_csv(
         file_path,
@@ -61,7 +61,7 @@ def load_transactions_csv(
 
 def load_transactions_excel(
     file_path: str,
-) -> list[dict[str, Any]]:
+) -> list[dict]:
     """Считывает финансовые операции из XLSX-файла."""
     transactions = pd.read_excel(file_path, dtype={"Номер карты": str})
 

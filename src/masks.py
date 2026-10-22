@@ -22,13 +22,7 @@ logger.addHandler(file_handler)
 def get_mask_card_number(card_number: int | str) -> str:
     """Принимает на вход номер карты и возвращает ее маску."""
     if len(str(card_number)) == 16:
-        mask_card_number = (
-            str(card_number)[0:4]
-            + " "
-            + str(card_number)[4:6]
-            + "** **** "
-            + str(card_number)[-4:]
-        )
+        mask_card_number = str(card_number)[0:4] + " " + str(card_number)[4:6] + "** **** " + str(card_number)[-4:]
 
         logger.info("Маска номера карты успешно создана")
         return mask_card_number
