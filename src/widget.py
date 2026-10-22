@@ -27,7 +27,7 @@ def get_date(date: str) -> str:
         if len(date) >= 11 and date[10] == "T":
             return f"{date[8:10]}." f"{date[5:7]}." f"{date[0:4]}"
 
-    except (IndexError, TypeError):
+    except IndexError, TypeError:
         pass
 
     return "wrong data format"
