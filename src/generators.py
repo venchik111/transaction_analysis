@@ -21,9 +21,4 @@ def card_number_generator(start: int, end: int):
     for number in range(start, end + 1):
         card_number = f"{number:016}"
 
-        yield (
-            f"{card_number[:4]} "
-            f"{card_number[4:8]} "
-            f"{card_number[8:12]} "
-            f"{card_number[12:]}"
-        )
+        yield (f"{card_number[:4]} " f"{card_number[4:8]} " f"{card_number[8:12]} " f"{card_number[12:]}")
