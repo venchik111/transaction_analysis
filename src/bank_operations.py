@@ -5,17 +5,19 @@ from collections import Counter
 def process_bank_search(
     data: list[dict],
     search: str,
+    fields: tuple[str, ...] = ("description",),
 ) -> list[dict]:
-    """Возвращает операции, содержащие строку поиска в описании."""
-    result = []
+    """Возвращает операции, содержащие строку поиска в указанных полях."""
 
-    for operation in data:
-        description = operation.get("description", "")
+    def matches(operation: dict) -> bool:
+        for field in fields:
+            value = operation.get(field)
+            text = value if isinstance(value, str) else ""
+            if re.search(search, text, flags=re.IGNORECASE):
+                return True
+        return False
 
-        if re.search(search, description, flags=re.IGNORECASE):
-            result.append(operation)
-
-    return result
+    return list(filter(matches, data))
 
 
 def process_bank_operations(
