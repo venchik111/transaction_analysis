@@ -7,6 +7,8 @@
 Нужны Python 3.14 и Poetry. Из папки проекта:
 
 ```bash
+git clone https://github.com/venchik111/transaction_analysis.git
+cd transaction_analysis
 poetry install
 cp .env_template .env
 poetry run python -m src.main
@@ -47,13 +49,13 @@ API в тестах заменяется моками; настоящий клю
 `src/main.py`: задачи курсовой и прежняя обработка файлов доступны в общем меню.
 Запуск: `poetry run python -m src.main`.
 
-- `main` — исходная стабильная ветка Bank Project.
+- `main` — готовая версия курсовой.
 - `develop` — собранная курсовая.
-- `codex/feature/coursework-data` — настройки и чтение Excel.
-- `codex/feature/coursework-search` — простой поиск на основе `process_bank_search`.
-- `codex/feature/coursework-report` — отчет и декоратор сохранения.
-- `codex/feature/coursework-home` — главная страница и котировки.
-- `codex/feature/coursework-run` — запуск примеров и документация.
+- `feature/coursework-data` — настройки и чтение Excel.
+- `feature/coursework-search` — простой поиск на основе `process_bank_search`.
+- `feature/coursework-report` — отчет и декоратор сохранения.
+- `feature/coursework-home` — главная страница и котировки.
+- `feature/coursework-run` — запуск примеров и документация.
 
 Каждая feature-ветка содержит небольшие коммиты и сливается в `develop` через merge.
 Новый загрузчик `load_operations` и прежний `load_transactions_excel` используют общий `read_excel_file`,
