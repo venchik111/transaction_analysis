@@ -45,6 +45,50 @@ def test_main_report(course_transactions: pd.DataFrame, date: str, capsys) -> No
 
 
 def test_main_wrong_choice(capsys) -> None:
-    with patch("src.main.setup_logging"), patch("builtins.input", return_value="4"):
+    with patch("src.main.setup_logging"), patch("builtins.input", return_value="5"):
         main()
     assert "Некорректный пункт меню." in capsys.readouterr().out
+
+
+def test_main_process_transactions(table_transactions: list[dict], capsys) -> None:
+    answers = ["4", "2", "executed", "нет", "нет", "нет"]
+    with (
+        patch("src.main.setup_logging"),
+        patch("src.main.load_transactions_csv", return_value=table_transactions),
+        patch("builtins.input", side_effect=answers),
+    ):
+        main()
+
+    output = capsys.readouterr().out
+    assert "Для обработки выбран CSV-файл." in output
+    assert "Всего банковских операций в выборке: 2" in output
+    assert "Сумма: 16210 PEN" in output
+    assert "Сумма: 29740 COP" in output
+
+
+@pytest.mark.parametrize(
+    "direction, first_date, second_date",
+    [
+        ("по возрастанию", "06.12.2020", "05.09.2023"),
+        ("по убыванию", "05.09.2023", "06.12.2020"),
+    ],
+)
+def test_main_sort_filter_and_search(
+    table_transactions: list[dict], direction: str, first_date: str, second_date: str, capsys
+) -> None:
+    transactions = [dict(operation, currency_code="RUB") for operation in table_transactions]
+    transactions.append(dict(table_transactions[0], description="Не выводить", currency_code="USD"))
+    answers = ["4", "2", "executed", "да", direction, "да", "да", "перевод"]
+
+    with (
+        patch("src.main.setup_logging"),
+        patch("src.main.load_transactions_csv", return_value=transactions),
+        patch("builtins.input", side_effect=answers),
+    ):
+        main()
+
+    output = capsys.readouterr().out
+    assert "Всего банковских операций в выборке: 2" in output
+    assert "Не выводить" not in output
+    assert "Сумма: 16210 руб." in output
+    assert output.index(first_date) < output.index(second_date)

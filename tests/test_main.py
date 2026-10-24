@@ -1,10 +1,10 @@
 from unittest.mock import Mock, patch
 
-from main import main
+from src.main import process_transactions
 
 
-@patch("main.load_transactions")
-def test_main_json(
+@patch("src.main.load_transactions")
+def test_process_transactions_json(
     mock_load_transactions: Mock,
     capsys,
 ) -> None:
@@ -35,7 +35,7 @@ def test_main_json(
         "builtins.input",
         side_effect=user_answers,
     ):
-        main()
+        process_transactions()
 
     captured = capsys.readouterr()
 
@@ -44,8 +44,8 @@ def test_main_json(
     assert "Всего банковских операций в выборке: 1" in captured.out
 
 
-@patch("main.load_transactions_csv")
-def test_main_csv(
+@patch("src.main.load_transactions_csv")
+def test_process_transactions_csv(
     mock_load_transactions_csv: Mock,
     capsys,
 ) -> None:
@@ -64,15 +64,15 @@ def test_main_csv(
         "builtins.input",
         side_effect=user_answers,
     ):
-        main()
+        process_transactions()
 
     captured = capsys.readouterr()
 
     assert "Для обработки выбран CSV-файл." in captured.out
 
 
-@patch("main.load_transactions_excel")
-def test_main_excel(
+@patch("src.main.load_transactions_excel")
+def test_process_transactions_excel(
     mock_load_transactions_excel: Mock,
     capsys,
 ) -> None:
@@ -91,15 +91,15 @@ def test_main_excel(
         "builtins.input",
         side_effect=user_answers,
     ):
-        main()
+        process_transactions()
 
     captured = capsys.readouterr()
 
     assert "Для обработки выбран XLSX-файл." in captured.out
 
 
-@patch("main.load_transactions")
-def test_main_wrong_status(
+@patch("src.main.load_transactions")
+def test_process_transactions_wrong_status(
     mock_load_transactions: Mock,
     capsys,
 ) -> None:
@@ -131,7 +131,7 @@ def test_main_wrong_status(
         "builtins.input",
         side_effect=user_answers,
     ):
-        main()
+        process_transactions()
 
     captured = capsys.readouterr()
 
@@ -139,8 +139,8 @@ def test_main_wrong_status(
     assert 'Операции отфильтрованы по статусу "EXECUTED"' in captured.out
 
 
-@patch("main.load_transactions")
-def test_main_empty_result(
+@patch("src.main.load_transactions")
+def test_process_transactions_empty_result(
     mock_load_transactions: Mock,
     capsys,
 ) -> None:
@@ -171,15 +171,15 @@ def test_main_empty_result(
         "builtins.input",
         side_effect=user_answers,
     ):
-        main()
+        process_transactions()
 
     captured = capsys.readouterr()
 
     assert "Не найдено ни одной транзакции" in captured.out
 
 
-@patch("main.load_transactions")
-def test_main_status_lowercase(
+@patch("src.main.load_transactions")
+def test_process_transactions_status_lowercase(
     mock_load_transactions: Mock,
     capsys,
 ) -> None:
@@ -210,15 +210,15 @@ def test_main_status_lowercase(
         "builtins.input",
         side_effect=user_answers,
     ):
-        main()
+        process_transactions()
 
     captured = capsys.readouterr()
 
     assert 'Операции отфильтрованы по статусу "EXECUTED"' in captured.out
 
 
-@patch("main.load_transactions")
-def test_main_invalid_menu(
+@patch("src.main.load_transactions")
+def test_process_transactions_invalid_menu(
     mock_load_transactions: Mock,
     capsys,
 ) -> None:
@@ -227,7 +227,7 @@ def test_main_invalid_menu(
         "builtins.input",
         return_value="10",
     ):
-        main()
+        process_transactions()
 
     captured = capsys.readouterr()
 
