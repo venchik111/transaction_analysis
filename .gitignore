@@ -2,3 +2,11 @@ venv/
 .idea/
 __pycache__/
 *.pyc
+.env
+.coverage
+htmlcov/
+.pytest_cache/
+logs/
+.venv/
+.mypy_cache/
+reports/
