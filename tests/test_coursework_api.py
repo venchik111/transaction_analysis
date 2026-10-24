@@ -6,12 +6,21 @@ import requests
 from src.external_api import get_api_data, get_currency_rates, get_stock_prices
 
 
+@pytest.fixture(autouse=True)
+def skip_api_delay(monkeypatch) -> None:
+    monkeypatch.setattr("src.external_api.sleep", lambda seconds: None)
+
+
 def test_get_api_data(monkeypatch) -> None:
     monkeypatch.setenv("ALPHA_VANTAGE_API_KEY", "test-key")
     response = Mock()
     response.json.return_value = {"value": 123}
-    with patch("src.external_api.requests.get", return_value=response) as mock_get:
+    with (
+        patch("src.external_api.requests.get", return_value=response) as mock_get,
+        patch("src.external_api.sleep") as delay,
+    ):
         assert get_api_data({"function": "GLOBAL_QUOTE"}) == {"value": 123}
+        delay.assert_called_once_with(1)
     assert mock_get.call_args.kwargs["timeout"] == 10
     assert mock_get.call_args.kwargs["params"]["apikey"] == "test-key"
     response.raise_for_status.assert_called_once()
