@@ -1,6 +1,7 @@
 import logging
 import math
 import os
+from time import sleep
 from typing import Any
 
 import requests
@@ -56,6 +57,7 @@ def get_api_data(params: dict[str, str]) -> dict[str, Any]:
         return {}
 
     try:
+        sleep(1)
         response = requests.get(ALPHA_VANTAGE_URL, params={**params, "apikey": api_key}, timeout=10)
         response.raise_for_status()
         data = response.json()
