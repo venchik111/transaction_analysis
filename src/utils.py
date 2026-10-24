@@ -59,11 +59,16 @@ def load_transactions_csv(
     return transactions.to_dict(orient="records")
 
 
+def read_excel_file(file_path: str | Path) -> pd.DataFrame:
+    """Читает таблицу Excel, сохраняя столбцы и номера карт."""
+    return pd.read_excel(file_path, dtype={"Номер карты": str})
+
+
 def load_transactions_excel(
     file_path: str,
 ) -> list[dict]:
     """Считывает финансовые операции из XLSX-файла."""
-    transactions = pd.read_excel(file_path, dtype={"Номер карты": str})
+    transactions = read_excel_file(file_path)
 
     return transactions.to_dict(orient="records")
 
@@ -80,13 +85,21 @@ def setup_logging() -> None:
     )
 
 
+def parse_dates(dates: pd.Series) -> pd.Series:
+    """Разбирает русские и ISO-даты без перестановки дня и месяца."""
+    iso_dates = dates.astype("string").str.match(r"^\d{4}-", na=False)
+    result = pd.to_datetime(dates, format="mixed", dayfirst=True, errors="coerce")
+    result.loc[iso_dates] = pd.to_datetime(dates.loc[iso_dates], format="ISO8601", errors="coerce")
+    return result
+
+
 def load_operations(file_path: str | Path) -> pd.DataFrame:
     """Готовит таблицу операций для курсовой на основе Excel-загрузчика."""
-    transactions = pd.DataFrame(load_transactions_excel(str(file_path)))
+    transactions = read_excel_file(file_path)
 
     for column in ["Дата операции", "Дата платежа"]:
         if column in transactions.columns:
-            transactions[column] = pd.to_datetime(transactions[column], dayfirst=True, errors="coerce")
+            transactions[column] = parse_dates(transactions[column])
 
     logger.info("Прочитано операций для анализа: %s", len(transactions))
     return transactions
